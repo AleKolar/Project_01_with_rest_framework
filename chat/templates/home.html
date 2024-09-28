@@ -1,0 +1,63 @@
+{% extends "default_2.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2>Все объявления:</h2>
+            <ul class="list-group">
+                {% for advertisement in all_advertisements %}
+                    <li class="list-group-item">
+                        <h3>{{ advertisement.title }}</h3>
+                        <p>{{ advertisement.text }}</p>
+                        <p>{{ advertisement.category }}</p>
+
+                        {% if advertisement.image and advertisement.video %}
+                            <img src="{{ advertisement.image.url }}" alt="{{ advertisement.title }}">
+                            <video controls>
+                                <source src="{{ advertisement.video.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            {% if advertisement.description %}
+                                <p>{{ advertisement.description }}</p>
+                            {% endif %}
+                        {% elif advertisement.video %}
+                            <video controls>
+                                <source src="{{ advertisement.video.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            {% if advertisement.description %}
+                                <p>{{ advertisement.description }}</p>
+                            {% endif %}
+                        {% elif advertisement.image %}
+                            <img src="{{ advertisement.image.url }}" alt="{{ advertisement.title }}">
+                        {% endif %}
+
+                        <a href="{% url 'advertisement_update' pk=advertisement.id %}" class="btn btn-primary">Редактировать объявление</a>
+
+                        <form action="{% url 'create_response' advertisement_id=advertisement.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success mt-2">Создать отклик</button>
+                        </form>
+
+                        <ul>
+                            {% for response in advertisement.responses.all %}
+                                {% if response.visible_to_all and response.accepted %}
+                                    <li>{{ response.content }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-2">
+            {% if user.is_authenticated %}
+                <h4>Пользователь_{{ user.username }}</h4>
+            {% else %}
+                <p>Пожалуйста, войдите, чтобы увидеть информацию о владельце страницы.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

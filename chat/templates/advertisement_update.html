@@ -1,0 +1,47 @@
+{% extends 'default_1.html' %}
+
+<!-- для редактирования -->
+{% block content %}
+<html>
+<head>
+    <title>Edit Advertisement</title>
+    <style>
+      .embed-responsive {
+        position: relative;
+        display: block;
+        width: 100%;
+        padding: 0;
+        overflow: hidden;
+      }
+      .embed-responsive-item {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+</head>
+<body>
+    <h1>Edit Advertisement</h1>
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="embed-responsive" style="width: 165mm; height: 95mm;">
+        <div class="embed-responsive-item">
+            <video width="100%" height="100%" controls>
+                <source src="video_path">
+            </video>
+        </div>
+    </div>
+
+    <button type="submit" name="action" value="save_image">Сохранить изображение</button>
+
+    <button type="submit" name="action" value="save_video">Сохранить видео</button>
+
+    <a href="{% url 'home' %}">Вернуться на главную</a>
+</form>
+</body>
+</html>
+{% endblock %}

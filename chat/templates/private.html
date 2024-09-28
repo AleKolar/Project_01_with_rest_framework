@@ -1,0 +1,57 @@
+{% extends "default_1.html" %}
+
+{% block content %}
+<a href="{% url 'advertisement_create' %}" class="btn btn-primary">Создать объявление</a>
+<a href="{% url 'home' %}">Вернуться на главную</a>
+
+<h1>Отклики пользователя</h1>
+
+<!-- Отображение всех объявлений пользователя с кнопкой "Редактировать" -->
+<ul>
+    {% for advertisement in user_advertisements %}
+        <li>
+            {{ advertisement.title }} - {{ advertisement.category }}
+            <a href="{% url 'advertisement_update' pk=advertisement.id %}">Редактировать</a>
+        </li>
+    {% empty %}
+        <li>У вас пока нет объявлений. <a href="{% url 'advertisement_create' %}">Создать объявление</a></li>
+    {% endfor %}
+</ul>
+
+<h2>Отклики пользователя</h2>
+
+<!-- Форма для фильтрации откликов -->
+<form method="GET">
+    <label for="title">Фильтр по названию объявления:</label>
+    <input type="text" name="title" id="title" value="{{ request.GET.title }}">
+
+    <label for="category">Фильтр по категории объявления:</label>
+    <select name="category" id="category">
+        <option value="">Выберите категорию</option>
+        {% for category_key, category_name in form.fields.category.choices %}
+            <option value="{{ category_key }}" {% if request.GET.category == category_key %}selected{% endif %}>{{ category_name }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Применить фильтры</button>
+</form>
+
+<!-- Отображение отфильтрованных откликов пользователя -->
+<ul>
+    {% for response in user_responses %}
+        <li>
+            Категория: {{ response.advertisement.category }} - Название: {{ response.advertisement.title }} - Отклик: {{ response.content }}
+            <form action="{% url 'accept_response' response_id=response.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Принять отзыв</button>
+            </form>
+            <form action="{% url 'delete_response' response_id=response.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Удалить отзыв</button>
+            </form>
+        </li>
+    {% empty %}
+        <li>Нет откликов на ваши объявления</li>
+    {% endfor %}
+</ul>
+{% endblock %}
