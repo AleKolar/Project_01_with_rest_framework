@@ -369,16 +369,6 @@ class NewsCreateListAPIView(APIView):
         return Response(serializer.data)
 
 
-# class NewsletterCreateAPIView(APIView):
-#     def post(self, request):
-#         serializer = NewsletterSerializer(data=request.data)
-#         if serializer.is_valid():
-#             newsletter = serializer.save()
-#             send_newsletter_task.delay(newsletter.id)
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 def display_news(request):
     all_news = Newsletter.objects.all().order_by('-sent_date')  # Получаем все новости из базы данных
     context = {'all_news': all_news}
